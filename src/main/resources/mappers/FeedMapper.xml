@@ -31,13 +31,23 @@
         ON A.ifeed = C.ifeed
         AND C.iuser = #{loginedIuser}
         <if test="targetIuser > 0">
-            WHERE A.iuser = #{targetIuser};
+            WHERE A.iuser = #{targetIuser}
         </if>
         ORDER BY A.ifeed desc
         limit #{startIdx}, #{rowCount}
     </select>
 
-
-
+    <!-- 회원가입 했는지 안했는지 -->
+    <select id="selIuser">
+        SELECT COUNT(*)
+        FROM t_user
+        WHERE iuser = #{iuser}
+    </select>
+    <!-- 그 피드에 작성된 글인지 아닌지-->
+    <select id="selIfeed">
+        SELECT COUNT(*)
+        FROM t_feed
+        WHERE ifeed = #{ifeed}
+    </select>
 
 </mapper>

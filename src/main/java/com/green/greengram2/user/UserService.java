@@ -46,4 +46,12 @@ public class UserService {
         }
         return new ResVo(pDto.getIuser());
     }
+
+    public UserInfoVo selUserInfo(int targetIuser) {
+        return mapper.selUserInfo(targetIuser);
+    }
+
+    public ResVo updUserpic(UserPatchPicDto dto) {
+        return new ResVo(mapper.updUserpic(dto));
+    }
 }

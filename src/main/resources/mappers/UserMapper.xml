@@ -19,4 +19,22 @@
         FROM t_user
         WHERE uid = #{uid}
     </select>
+
+    <select id="selUserInfo">
+        SELECT COUNT(DISTINCT A.ifeed) AS feedCnt,
+        COUNT(C.ifeed) AS favCnt, B.pic,
+        B.nm, B.created_at AS createdAt
+        FROM t_feed AS A
+        RIGHT JOIN t_user AS B
+        ON A.iuser = B.iuser
+        LEFT JOIN t_feed_fav C
+        ON A.ifeed = C.ifeed
+        WHERE B.iuser = #{targetIuser}
+    </select>
+
+    <update id="updUserpic">
+        UPDATE t_user
+        SET pic = #{pic}
+        WHERE iuser = #{iuser}
+    </update>
 </mapper>

@@ -16,6 +16,8 @@ import java.util.List;
 public class FeedService {
     private final FeedMapper mapper;
     private final FeedPicsMapper picsMapper;
+    private final FeedFavMapper favMapper;
+    private final FeedCommentMapper commMapper;
 
     public ResVo postFeed(FeedInsDto dto) {
         FeedInsProcDto pDto = FeedInsProcDto.builder()
@@ -38,6 +40,20 @@ public class FeedService {
         return list;
     }
 
+    public ResVo procFav(FeedFavDto dto) {
+        int result = favMapper.delFeedFav(dto);
+        if (result == 0) {
+            ResVo rv = new ResVo(favMapper.insFeedFav(dto));
+            return rv;
+        }
+        return new ResVo(0);
+    }
 
-
+    public ResVo insFeedComment(@RequestBody FeedCommentInsDto dto) {
+        try {
+            return new ResVo(commMapper.insComment(dto));
+        } catch (Exception e) {
+            return new ResVo(0);
+        }
+    }
 }
