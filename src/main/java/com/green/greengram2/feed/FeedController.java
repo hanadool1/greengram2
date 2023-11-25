@@ -73,8 +73,26 @@ public class FeedController {
     @PostMapping("/comment")
     public ResVo insFeedComment(@RequestBody FeedCommentInsDto dto) {
         log.info("dto : {}",dto);
-        return service.insFeedComment(dto);
+        return service.insComment(dto);
     }
+
+    @GetMapping("/comment")
+    public List<FeedCommentSelVo> getComment(int ifeed) {
+        return service.getCommentAll(ifeed);
+    }
+
+    @DeleteMapping("/comment")
+    public ResVo delComment(@RequestParam("ifeed_comment") int ifeedComment, @RequestParam("logined_iuser") int loginedIuser) {
+        log.info("ifeedComment: {}, loginedIuser: {}", ifeedComment,loginedIuser);
+        return service.delComment(ifeedComment,loginedIuser);
+    }
+
+    @DeleteMapping
+    public ResVo delFeed(FeedDelDto dto) {
+        log.info("dtd : {}",dto);
+        return service.delFeed(dto);
+    }
+
 
 
 }

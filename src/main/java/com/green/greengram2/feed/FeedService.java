@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -36,6 +37,16 @@ public class FeedService {
         List<FeedSelVo> list = mapper.selFeedAll(dto);
         for (FeedSelVo vo : list) {
             vo.setPics(picsMapper.selFeedPicsAll(vo.getIfeed()));
+            List<FeedCommentSelVo> comments = commMapper.selCommentAll(FeedCommentSelDto.builder()
+                            .ifeed(vo.getIfeed())
+                            .startIdx(0)
+                            .rowCount(4)
+                            .build());
+            if (comments.size() == 4) {
+                vo.setIsMoreComment(1);
+                comments.remove(comments.size()-1);
+            }
+            vo.setComments(comments);
         }
         return list;
     }
@@ -49,11 +60,51 @@ public class FeedService {
         return new ResVo(0);
     }
 
-    public ResVo insFeedComment(@RequestBody FeedCommentInsDto dto) {
+    public ResVo insComment(FeedCommentInsDto dto) {
+        FeedCommentInsProcDto pDto = FeedCommentInsProcDto.builder()
+                .iuser(dto.getIuser())
+                .ifeed(dto.getIfeed())
+                .comment(dto.getComment())
+                .build();
         try {
-            return new ResVo(commMapper.insComment(dto));
+            int result = commMapper.insComment(pDto);
+            return new ResVo(pDto.getIfeedComment());
         } catch (Exception e) {
             return new ResVo(0);
         }
+    }
+
+    //-------------------- FeedComment
+//    public ResVo postComment(FeedCommentInsDto dto) {
+//        int affectedRows = commMapper.insComment(dto);
+//        return new ResVo(affectedRows);
+//    }
+
+    public List<FeedCommentSelVo> getCommentAll(int ifeed) {
+        return commMapper.selCommentAll(FeedCommentSelDto.builder()
+                .ifeed(ifeed)
+                .startIdx(4)
+                .rowCount(9999)
+                .build());
+    }
+
+    public ResVo delComment(int ifeedComment, int loginedIuser){
+        return new ResVo(commMapper.delComment(FeedCommentDelDto.builder()
+                .ifeedComment(ifeedComment)
+                .loginedIuser(loginedIuser)
+                .build()));
+    }
+
+    public ResVo delFeed(FeedDelDto dto) {
+        int result = mapper.selFeed(dto);
+        if (result == 0) {
+            return new ResVo(0);
+        }
+        commMapper.delFeedComment(dto);
+        favMapper.delFav(dto);
+        picsMapper.delFeedPics(dto);
+        mapper.delFeed(dto);
+        return new ResVo(1);
+
     }
 }

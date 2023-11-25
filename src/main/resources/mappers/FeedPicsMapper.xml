@@ -10,5 +10,10 @@
         WHERE ifeed = #{ifeed}
     </select>
 
+    <delete id="delFeedPics">
+        DELETE
+        FROM t_feed_pics
+        WHERE ifeed = #{ifeed}
+    </delete>
 
 </mapper>
